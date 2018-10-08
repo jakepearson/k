@@ -8,4 +8,4 @@ This script will read the version of the Kubernetes server you are running. It w
 
 Download the file to somewhere in your path. Any time you would call `kubectl ...`, call `kx ...` instead.
 
-`curl  https://github.com/jakepearson/kx/blob/master/kx`
+`curl -OL https://raw.githubusercontent.com/jakepearson/kx/master/kx && chmod +x kx`
