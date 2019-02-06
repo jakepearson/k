@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set +x
+set +xe
 
 KX_PATH="$HOME/.kx"
 mkdir -p "$KX_PATH/cache"
