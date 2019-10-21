@@ -28,7 +28,7 @@ fi
 
 # Get the server version from the server if not cached
 if [ -z "$TARGET_VERSION" ]; then
-  TARGET_VERSION=$(kubectl version -o json | jq -r '.serverVersion.gitVersion')
+  TARGET_VERSION=$(kubectl version -o json | jq -r '.serverVersion.gitVersion' | cut -d'.' -f1-4)
 fi
 
 # Fill the cache if possible
