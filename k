@@ -29,7 +29,10 @@ fi
 # Ensure we have at least 1 kubectl version
 KNOWN_VERSION="v1.16.3"
 KNOWN_TARGET=$KX_PATH/kubectl-$KNOWN_VERSION
-if [ ! -f "$KNOWN_TARGET" ]; then
+KUBECTL_PATH=$(command -v kubectl)
+if [ ! -z $KUBECTL_PATH ]; then
+  KNOWN_TARGET=$KUBECTL_PATH
+elif [ ! -f "$KNOWN_TARGET" ]; then
   curl -L -o $KNOWN_TARGET "https://storage.googleapis.com/kubernetes-release/release/$KNOWN_VERSION/bin/$OS/amd64/kubectl"
   chmod +x $KNOWN_TARGET
 fi
