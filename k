@@ -26,9 +26,21 @@ if [ ! -z "$KUBECONFIG" ]; then
   TARGET_VERSION=$(cat "$VERSION_CACHE_FILE" 2> /dev/null)
 fi
 
+# Ensure we have at least 1 kubectl version
+KNOWN_VERSION="v1.16.3"
+KNOWN_TARGET=$KX_PATH/kubectl-$KNOWN_VERSION
+if [ ! -f "$KNOWN_TARGET" ]; then
+  curl -L -o $KNOWN_TARGET "https://storage.googleapis.com/kubernetes-release/release/$KNOWN_VERSION/bin/$OS/amd64/kubectl"
+  chmod +x $KNOWN_TARGET
+fi
+
 # Get the server version from the server if not cached
 if [ -z "$TARGET_VERSION" ]; then
-  TARGET_VERSION=$(kubectl version -o json | jq -r '.serverVersion.gitVersion')
+  TARGET_VERSION=$($KNOWN_TARGET version -o json | jq -r '.serverVersion.gitVersion')
+  if [ -z "$TARGET_VERSION" ] || [ "$TARGET_VERSION" == "null" ]; then
+    echo "Unable to get version information from cluster"
+    exit 1
+  fi
   if [ $(echo $TARGET_VERSION | egrep "alpha|beta|rc") ]; then
     TARGET_VERSION=$(echo $TARGET_VERSION | cut -d'.' -f1-4)
   else
@@ -44,9 +56,7 @@ fi
 TARGET=$KX_PATH/kubectl-$TARGET_VERSION
 
 if [ ! -f $TARGET ]; then
-  cd "$KX_PATH"
-  curl -LO "https://storage.googleapis.com/kubernetes-release/release/$TARGET_VERSION/bin/$OS/amd64/kubectl"
-  mv $KX_PATH/kubectl $TARGET
+  curl -L -o $TARGET "https://storage.googleapis.com/kubernetes-release/release/$TARGET_VERSION/bin/$OS/amd64/kubectl"
   chmod +x $TARGET
 fi
 
