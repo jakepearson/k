@@ -30,11 +30,11 @@ fi
 KNOWN_VERSION="v1.16.3"
 KNOWN_TARGET=$KX_PATH/kubectl-$KNOWN_VERSION
 KUBECTL_PATH=$(command -v kubectl)
-if [ ! -z $KUBECTL_PATH ]; then
+if [ ! -z "$KUBECTL_PATH" ]; then
   KNOWN_TARGET=$KUBECTL_PATH
 elif [ ! -f "$KNOWN_TARGET" ]; then
-  curl -L -o $KNOWN_TARGET "https://storage.googleapis.com/kubernetes-release/release/$KNOWN_VERSION/bin/$OS/amd64/kubectl"
-  chmod +x $KNOWN_TARGET
+  curl -L -o "$KNOWN_TARGET" "https://storage.googleapis.com/kubernetes-release/release/$KNOWN_VERSION/bin/$OS/amd64/kubectl"
+  chmod +x "$KNOWN_TARGET"
 fi
 
 # Get the server version from the server if not cached
@@ -58,9 +58,9 @@ fi
 
 TARGET=$KX_PATH/kubectl-$TARGET_VERSION
 
-if [ ! -f $TARGET ]; then
-  curl -L -o $TARGET "https://storage.googleapis.com/kubernetes-release/release/$TARGET_VERSION/bin/$OS/amd64/kubectl"
-  chmod +x $TARGET
+if [ ! -f "$TARGET" ]; then
+  curl -L -o "$TARGET" "https://storage.googleapis.com/kubernetes-release/release/$TARGET_VERSION/bin/$OS/amd64/kubectl"
+  chmod +x "$TARGET"
 fi
 
 $TARGET "$@"
