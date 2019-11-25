@@ -26,6 +26,19 @@ if [ ! -z "$KUBECONFIG" ]; then
   TARGET_VERSION=$(cat "$VERSION_CACHE_FILE" 2> /dev/null)
 fi
 
+# Use Correct CPU Architecture
+CPU_ARCHITECTURE=$(uname -m)
+case $CPU_ARCHITECTURE in
+  armv5*) CPU_ARCHITECTURE="armv5";;
+  armv6*) CPU_ARCHITECTURE="armv6";;
+  armv7*) CPU_ARCHITECTURE="arm";;
+  aarch64) CPU_ARCHITECTURE="arm64";;
+  x86) CPU_ARCHITECTURE="386";;
+  x86_64) CPU_ARCHITECTURE="amd64";;
+  i686) CPU_ARCHITECTURE="386";;
+  i386) CPU_ARCHITECTURE="386";;
+esac
+
 # Ensure we have at least 1 kubectl version
 KNOWN_VERSION="v1.16.3"
 LOCAL_KUBECTL=$KX_PATH/kubectl-$KNOWN_VERSION
@@ -33,7 +46,7 @@ KUBECTL_PATH=$(command -v kubectl)
 if [ ! -z "$KUBECTL_PATH" ]; then
   LOCAL_KUBECTL=$KUBECTL_PATH
 elif [ ! -f "$LOCAL_KUBECTL" ]; then
-  curl -L -o "$LOCAL_KUBECTL" "https://storage.googleapis.com/kubernetes-release/release/$KNOWN_VERSION/bin/$OS/amd64/kubectl"
+  curl -L -o "$LOCAL_KUBECTL" "https://storage.googleapis.com/kubernetes-release/release/$KNOWN_VERSION/bin/$OS/$CPU_ARCHITECTURE/kubectl"
   chmod +x "$LOCAL_KUBECTL"
 fi
 
@@ -59,7 +72,7 @@ fi
 TARGET=$KX_PATH/kubectl-$TARGET_VERSION
 
 if [ ! -f "$TARGET" ]; then
-  curl -L -o "$TARGET" "https://storage.googleapis.com/kubernetes-release/release/$TARGET_VERSION/bin/$OS/amd64/kubectl"
+  curl -L -o "$TARGET" "https://storage.googleapis.com/kubernetes-release/release/$TARGET_VERSION/bin/$OS/$CPU_ARCHITECTURE/kubectl"
   chmod +x "$TARGET"
 fi
 
