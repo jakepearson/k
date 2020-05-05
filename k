@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set +xe
 
-KX_PATH="$HOME/.kx"
+KX_PATH="${KX_PATH:-$HOME/.kx}"
 mkdir -p "$KX_PATH/cache"
 
 case "$OSTYPE" in
