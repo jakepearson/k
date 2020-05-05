@@ -1,5 +1,17 @@
 #!/usr/bin/env bash
-set -xe
+set +xe
+
+# DEBUG
+# true => verbose (`set -xe`)
+# <anything_else> => nothing
+DEBUG=${DEBUG:-false}
+
+if [[ "$DEBUG" == "true" ]];
+then
+  set -xe
+  echo "Enabled verbose logging."
+fi
+
 
 KX_PATH="${KX_PATH:-$HOME/.kx}"
 mkdir -p "$KX_PATH/cache"
@@ -46,7 +58,7 @@ esac
 KNOWN_VERSION="$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)"
 LOCAL_KUBECTL=$KX_PATH/kubectl-$KNOWN_VERSION
 if [ ! -f "$LOCAL_KUBECTL" ]; then
-  curl -L -o "$LOCAL_KUBECTL" "https://storage.googleapis.com/kubernetes-release/release/$KNOWN_VERSION/bin/$OS/$CPU_ARCHITECTURE/kubectl"
+  curl -L -o "$LOCAL_KUBECTL" "https://storage.googleapis.com/kubernetes-release/release/$KNOWN_VERSION/bin/$OS/$CPU_ARCHITECTURE/kubectl" > /dev/null 2>&1
   chmod +x "$LOCAL_KUBECTL"
 fi
 
@@ -58,7 +70,7 @@ if [ -z "$TARGET_VERSION" ]; then
     exit 1
   fi
   # watch out for different non-stable release versions
-  if echo "$TARGET_VERSION" | grep -E "alpha|beta|rc"
+  if echo "$TARGET_VERSION" | grep -E "alpha|beta|rc" > /dev/null 2>&1
   then
     TARGET_VERSION=$(echo $TARGET_VERSION | cut -d'.' -f1-4)
   else
@@ -66,7 +78,7 @@ if [ -z "$TARGET_VERSION" ]; then
   fi
 
   # watch out for the custom EKS version
-  if echo "$TARGET_VERSION" | grep -E "eks"
+  if echo "$TARGET_VERSION" | grep -E "eks" > /dev/null 2>&1
   then
     TARGET_VERSION=$(echo $TARGET_VERSION | cut -d'-' -f1)
   fi
@@ -80,7 +92,7 @@ fi
 TARGET=$KX_PATH/kubectl-$TARGET_VERSION
 
 if [ ! -f "$TARGET" ]; then
-  curl -L -o "$TARGET" "https://storage.googleapis.com/kubernetes-release/release/$TARGET_VERSION/bin/$OS/$CPU_ARCHITECTURE/kubectl"
+  curl -L -o "$TARGET" "https://storage.googleapis.com/kubernetes-release/release/$TARGET_VERSION/bin/$OS/$CPU_ARCHITECTURE/kubectl" > /dev/null 2>&1
   chmod +x "$TARGET"
 fi
 
